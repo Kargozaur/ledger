@@ -48,8 +48,9 @@ class CreateFiscalOperation(CreateView):
     # Определение метода получения URL (redirect)
     def get_success_url(self):
         return reverse("create_fiscal_operation")
-
+    
     def form_valid(self, form):
+        #
         try:
             rrn = form.cleaned_data.get("rrn")
             if len(str(rrn)) != 12 or len(str(rrn))!= 0:
