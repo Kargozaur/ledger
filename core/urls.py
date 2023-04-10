@@ -1,11 +1,16 @@
-#схема для core
+# схема для core
 
 from django.urls import path
 from . import views
+from .views import HomePageView, HistoryView, CreateFiscalOperation
 
 app_name = "core"
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('history/', views.history, name="history"),
-    path('add_operation/', views.add_operation, name='add_operation')
+    path("", HomePageView.as_view(), name="home"),
+    path("history/", HistoryView.as_view(), name="history"),
+    path(
+        "create_fiscal_operation/",
+        CreateFiscalOperation.as_view(),
+        name="create_fiscal_operation",
+    ),
 ]

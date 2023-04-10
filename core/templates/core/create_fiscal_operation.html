@@ -1,0 +1,14 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Добавить операцию{% endblock title %}
+
+
+{% block content %}
+  <h1>Создать операцию</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Добавить</button>
+  </form>
+{% endblock %}
+    

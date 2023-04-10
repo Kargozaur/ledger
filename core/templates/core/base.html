@@ -15,14 +15,16 @@
             <span class="logo">Test</span>
             <h3>Навигация по проекту</h3>
             <ul>
-                <a href = "{% url 'core:index' %}"><li><i class="fa-solid fa-house"></i>Главная</li></a>
+                <a href = "{% url 'core:home' %}"><li><i class="fa-solid fa-house"></i>Главная</li></a>
                 <a href = "{% url 'core:history' %}"><li><i class="fa-solid fa-plus"></i>История операций</li></a>
-                <a href = "{% url 'core:add_operation' %}"><li><i class="fa-solid fa-face-laugh"></i>Добавить операцию</li></a>
+                <a href = "{% url 'core:create_fiscal_operation' %}"><li><i class="fa-solid fa-face-laugh"></i>Добавить операцию</li></a>
             </ul>
         </aside>
         <main>
-            {% block content %} {% endblock content %}
-        </main>
+            <div class="features">
+                {% block content %} {% endblock content %}
+            </div>
+            </main>
         <script src="https://kit.fontawesome.com/90ccfcdfa6.js" crossorigin="anonymous"></script>
     </body>
 </html>
