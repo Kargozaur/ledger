@@ -44,44 +44,40 @@ class CreateFiscalOperation(CreateView):
     model = ledger_fiscal_operations
     form_class = RecordForm
     template_name = "create_fiscal_operation.html"
+    success_url = reverse_lazy('create_fiscal_operation')
 
-    # Определение метода получения URL (redirect)
-    def get_success_url(self):
-        return reverse("create_fiscal_operation")
-    
     def form_valid(self, form):
-        #
         try:
+            # Получаем данные из формы
             rrn = form.cleaned_data.get("rrn")
-            if len(str(rrn)) != 12 or len(str(rrn))!= 0:
-                messages.error(
-                    self.request, "RRN должен состоять из 12 символов или пустой строкой"
-                )
-                return self.form_invalid(form)
-
-            operation_type_name = form.cleaned_data.get(
-                "operation_type"
-            )
-            shop_name = form.cleaned_data.get("shop")
+            operation_type_id = form.cleaned_data.get("operation_type_id")
+            shop_id = form.cleaned_data.get("shop_id")
             date = form.cleaned_data.get("date")
             amt = form.cleaned_data.get("amt")
-            created_at = datetime.datetime.now()
+            created_at = form.cleaned_data.get("created_at")
 
-            FiscalOperationsAlias.create_operation(
-                rrn,
-                operation_type_name,
-                shop_name,
-                date,
-                amt,
-                created_at,
+            # Создаем объект модели
+            obj = ledger_fiscal_operations(
+                rrn=rrn,
+                operation_type_id=operation_type_id,
+                shop_id=shop_id,
+                date=date,
+                amt=amt,
+                created_at=created_at
             )
+            obj.save()  # Сохраняем объект модели в БД
 
+            # Выводим сообщение об успешном создании объекта
             messages.success(self.request, "Операция создана успешно")
+            
         except Exception as e:
+            # В случае возникновения ошибки выводим сообщение об ошибке
             messages.error(
                 self.request,
-                f"Случилась ошибка при создании операции {e}",
+                f"Случилась ошибка при создании операции: {e}"
             )
+            return super().form_invalid(form)
+
         return super().form_valid(form)
 
     # метод для обработки валидной формы

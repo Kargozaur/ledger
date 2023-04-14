@@ -1,5 +1,6 @@
 from django.db import models, transaction
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 
 # Models
@@ -45,18 +46,33 @@ class ledger_shop(models.Model):
 class ledger_fiscal_operations(models.Model):
     id = models.AutoField(primary_key=True, db_column="id")
     rrn = models.BigIntegerField(unique=True, db_column="rrn")
-    operation_type_id = models.IntegerField(
-        db_column="operation_type_id"
+    operation_type_id = models.ForeignKey(
+        ledger_operation_type,
+        to_field="id",
+        on_delete=models.CASCADE,
+        db_column="operation_type_id",
     )
-    shop_id = models.IntegerField(db_column="shop_id")
+    shop_id = models.ForeignKey(
+        ledger_shop,
+        to_field="id",
+        on_delete=models.CASCADE,
+        db_column="shop_id",
+    )
     date = models.DateField(db_column="date")
-    amt = models.DecimalField(
-        max_digits=8, decimal_places=2, db_column="amt"
-    )
+    amt = models.DecimalField(max_digits=8, decimal_places=2, db_column="amt")
     created_at = models.DateField(db_column="created_at")
 
     class Meta:
         db_table = "ledger_fiscal_operations"
+
+    def save(self, *args, **kwargs):
+        if not self.rrn:
+            self.rrn = self.id
+        super(ledger_fiscal_operations, self).save(*args, **kwargs)
+
+    def clean(self):
+        if self.rrn and len(str(self.rrn)) != 12:
+            raise ValidationError("RRN должен состоять из 12 символов")
 
 
 # Alias
@@ -88,12 +104,12 @@ class FiscalOperationsAlias(ledger_fiscal_operations):
             name=operation_type_name
         )
         shop = ShopAlias.objects.get(name=shop_name)
-        #получить id в переменную -> запихнуть в rrn
-        #id = cls.objects.raw(
+        # получить id в переменную -> запихнуть в rrn
+        # id = cls.objects.raw(
         #    f"SELECT setval(pg_get_serial_sequence('{fiscal_operations_alias}', 'id'), (SELECT MAX(id) FROM {fiscal_operations_alias}))"
-        #)
+        # )
         ledger_fiscal_operations.objects.create(
-            id = id,
+            id=id,
             rrn=rrn,
             operation_type_id=operation_type.id,
             shop_id=shop.id,
