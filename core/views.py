@@ -45,7 +45,7 @@ class CreateFiscalOperation(CreateView):
     model = ledger_fiscal_operations
     form_class = RecordForm
     template_name = "create_fiscal_operation.html"
-    success_url = reverse_lazy('create_fiscal_operation')
+    success_url = reverse_lazy("create_fiscal_operation")
 
     def form_valid(self, form):
         try:
@@ -64,7 +64,7 @@ class CreateFiscalOperation(CreateView):
                 shop_id=shop_id,
                 date=date,
                 amt=amt,
-                created_at=created_at
+                created_at=created_at,
             )
             obj.save()  # Сохраняем объект модели в БД
 
@@ -74,14 +74,13 @@ class CreateFiscalOperation(CreateView):
         except Exception as e:
             # В случае возникновения ошибки выводим сообщение об ошибке
             messages.error(
-                self.request,
-                f"Случилась ошибка при создании операции: {e}"
+                self.request, f"Случилась ошибка при создании операции: {e}"
             )
             return super().form_invalid(form)
 
     def get_success_url(self):
         return self.request.path
-        #return super().form_valid(form)
+        # return super().form_valid(form)
 
     # метод для обработки валидной формы
     # def form_valid(self, form):

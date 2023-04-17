@@ -8,23 +8,28 @@ from .models import (
 
 
 from django import forms
-from .models import ledger_fiscal_operations, ledger_operation_type, ledger_shop
+from .models import (
+    ledger_fiscal_operations,
+    ledger_operation_type,
+    ledger_shop,
+)
+
 
 class RecordForm(forms.ModelForm):
-    #drop-листы для выбора операции и магазина
+    # drop-листы для выбора операции и магазина
     operation_type_id = forms.ModelChoiceField(
         queryset=ledger_operation_type.objects.all(),
         widget=forms.Select(
             attrs={"class": "form-control"},
         ),
-        #label="Operation Type",
+        # label="Operation Type",
     )
     shop_id = forms.ModelChoiceField(
         queryset=ledger_shop.objects.all(),
         widget=forms.Select(
             attrs={"class": "form-control"},
         ),
-        #label="Shop",
+        # label="Shop",
     )
 
     class Meta:
@@ -49,9 +54,11 @@ class RecordForm(forms.ModelForm):
         else:
             rrn = self.instance.id if rrn is None or rrn == "" else rrn
         return rrn
-    
-    #доп настройки -> rrn не обязательное поле 
+
+    # доп настройки -> rrn не обязательное поле
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["rrn"].required = False
-        self.fields["operation_type_id"].queryset = ledger_operation_type.objects.all()
+        self.fields[
+            "operation_type_id"
+        ].queryset = ledger_operation_type.objects.all()

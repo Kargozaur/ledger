@@ -63,7 +63,7 @@ class ledger_fiscal_operations(models.Model):
     )
     date = models.DateField(db_column="date")
     amt = models.DecimalField(max_digits=8, decimal_places=2, db_column="amt")
-    created_at = models.DateField(auto_now=True ,db_column="created_at")
+    created_at = models.DateField(auto_now=True, db_column="created_at")
 
     class Meta:
         db_table = "ledger_fiscal_operations"
@@ -77,7 +77,7 @@ class ledger_fiscal_operations(models.Model):
         if self.rrn and len(str(self.rrn)) != 12:
             raise ValidationError("RRN должен состоять из 12 символов")
 
-    
+
 # Alias
 
 

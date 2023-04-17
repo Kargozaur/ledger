@@ -5,7 +5,10 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("core", "0008_alter_ledger_fiscal_operations_operation_type_id_and_more"),
+        (
+            "core",
+            "0008_alter_ledger_fiscal_operations_operation_type_id_and_more",
+        ),
     ]
 
     operations = [
