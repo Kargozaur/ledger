@@ -17,14 +17,14 @@ class RecordForm(forms.ModelForm):
         widget=forms.Select(
             attrs={"class": "form-control"},
         ),
-        label="Operation Type",
+        #label="Operation Type",
     )
     shop_id = forms.ModelChoiceField(
         queryset=ledger_shop.objects.all(),
         widget=forms.Select(
             attrs={"class": "form-control"},
         ),
-        label="Shop",
+        #label="Shop",
     )
 
     class Meta:
@@ -55,7 +55,3 @@ class RecordForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["rrn"].required = False
         self.fields["operation_type_id"].queryset = ledger_operation_type.objects.all()
-        self.fields["shop_id"].queryset = ledger_shop.objects.all()
-        if self.instance:
-            self.fields["operation_type_id"].initial = self.instance.operation_type_id
-            self.fields["shop_id"].initial = self.instance.shop_id

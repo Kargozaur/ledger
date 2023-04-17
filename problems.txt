@@ -15,3 +15,4 @@
 убрать тех. поля (created_at)
 редактирование операций
 
+RelatedObjectDoesNotExist - сдохла бд

@@ -12,6 +12,9 @@ class ledger_operation_type(models.Model):
     class Meta:
         db_table = "ledger_operation_type"
 
+    def __str__(self):
+        return self.name
+
 
 class ledger_category(models.Model):
     id = models.AutoField(primary_key=True, db_column="id")
@@ -40,7 +43,7 @@ class ledger_shop(models.Model):
         db_table = "ledger_shop"
 
     def __str__(self):
-        return str(self.id)
+        return self.name
 
 
 class ledger_fiscal_operations(models.Model):
@@ -60,7 +63,7 @@ class ledger_fiscal_operations(models.Model):
     )
     date = models.DateField(db_column="date")
     amt = models.DecimalField(max_digits=8, decimal_places=2, db_column="amt")
-    created_at = models.DateField(db_column="created_at")
+    created_at = models.DateField(auto_now=True ,db_column="created_at")
 
     class Meta:
         db_table = "ledger_fiscal_operations"
@@ -74,7 +77,7 @@ class ledger_fiscal_operations(models.Model):
         if self.rrn and len(str(self.rrn)) != 12:
             raise ValidationError("RRN должен состоять из 12 символов")
 
-
+    
 # Alias
 
 

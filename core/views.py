@@ -3,6 +3,7 @@ from django.views.generic import View, ListView, CreateView
 from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 from .forms import RecordForm
+from django.http import HttpResponseRedirect
 from django.utils import timezone
 from .models import (
     ledger_category,
@@ -69,7 +70,7 @@ class CreateFiscalOperation(CreateView):
 
             # Выводим сообщение об успешном создании объекта
             messages.success(self.request, "Операция создана успешно")
-            
+            return super().form_valid(form)
         except Exception as e:
             # В случае возникновения ошибки выводим сообщение об ошибке
             messages.error(
@@ -78,7 +79,9 @@ class CreateFiscalOperation(CreateView):
             )
             return super().form_invalid(form)
 
-        return super().form_valid(form)
+    def get_success_url(self):
+        return self.request.path
+        #return super().form_valid(form)
 
     # метод для обработки валидной формы
     # def form_valid(self, form):
