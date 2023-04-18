@@ -1,5 +1,4 @@
 from django.db import models, transaction
-from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 
@@ -76,6 +75,10 @@ class ledger_fiscal_operations(models.Model):
     def clean(self):
         if self.rrn and len(str(self.rrn)) != 12:
             raise ValidationError("RRN должен состоять из 12 символов")
+        
+    @transaction.atomic()
+    def save_with_transaction(self, *args, **kwargs):
+        self.save(*args, **kwargs)
 
 
 # Alias
@@ -88,38 +91,39 @@ class ShopAlias(ledger_shop):
         verbose_name_plural = "Shops Alias"
 
 
-class FiscalOperationsAlias(ledger_fiscal_operations):
-    class Meta:
-        proxy = True
-        verbose_name = "Операция"
-        verbose_name_plural = "Операции"
-
-    @classmethod
-    @transaction.atomic
-    def create_operation(
-        cls, rrn, operation_type_name, shop_name, date, amt, created_at
-    ):
-        operation_type_alias = ledger_operation_type._meta.db_table
-        shop_alias = ShopAlias._meta.db_table
-        fiscal_operations_alias = FiscalOperationsAlias._meta.db_table
-
-        operation_type = ledger_operation_type.objects.get(
-            name=operation_type_name
-        )
-        shop = ShopAlias.objects.get(name=shop_name)
-        # получить id в переменную -> запихнуть в rrn
-        # id = cls.objects.raw(
-        #    f"SELECT setval(pg_get_serial_sequence('{fiscal_operations_alias}', 'id'), (SELECT MAX(id) FROM {fiscal_operations_alias}))"
-        # )
-        ledger_fiscal_operations.objects.create(
-            id=id,
-            rrn=rrn,
-            operation_type_id=operation_type.id,
-            shop_id=shop.id,
-            date=date,
-            amt=amt,
-            created_at=created_at,
-        )
-        cls.objects.raw(
-            f"SELECT setval(pg_get_serial_sequence('{fiscal_operations_alias}', 'id'), (SELECT MAX(id) FROM {fiscal_operations_alias}))"
-        )
+#class FiscalOperationsAlias(ledger_fiscal_operations):
+#    class Meta:
+#        proxy = True
+#        verbose_name = "Операция"
+#        verbose_name_plural = "Операции"
+#
+#    @classmethod
+#    @transaction.atomic
+#    def create_operation(
+#        cls, rrn, operation_type_name, shop_name, date, amt, created_at
+#    ):
+#        operation_type_alias = ledger_operation_type._meta.db_table
+#        shop_alias = ShopAlias._meta.db_table
+#        fiscal_operations_alias = FiscalOperationsAlias._meta.db_table
+#
+#        operation_type = ledger_operation_type.objects.get(
+#            name=operation_type_name
+#        )
+#        shop = ShopAlias.objects.get(name=shop_name)
+#        # получить id в переменную -> запихнуть в rrn
+#        # id = cls.objects.raw(
+#        #    f"SELECT setval(pg_get_serial_sequence('{fiscal_operations_alias}', 'id'), (SELECT MAX(id) FROM {fiscal_operations_alias}))"
+#        # )
+#        ledger_fiscal_operations.objects.create(
+#            id=id,
+#            rrn=rrn,
+#            operation_type_id=operation_type.id,
+#            shop_id=shop.id,
+#            date=date,
+#            amt=amt,
+#            created_at=created_at,
+#        )
+#        cls.objects.raw(
+#            f"SELECT setval(pg_get_serial_sequence('{fiscal_operations_alias}', 'id'), (SELECT MAX(id) FROM {fiscal_operations_alias}))"
+#        )
+#

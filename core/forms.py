@@ -1,6 +1,5 @@
 from django import forms
 from .models import (
-    ledger_category,
     ledger_fiscal_operations,
     ledger_operation_type,
     ledger_shop,

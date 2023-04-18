@@ -1,35 +1,33 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
 {% block title %} 
     История последних операций
 {% endblock title %}
 
+
 {% block content %}
 <h1>История операций</h1>
 <table>
-  <thead>
-    <tr>
-      <th>Магазин</th>
-      <th>Категория</th>
-      <th>Тип операции</th>
-      <th>Дата</th>
-      <th>Сумма</th>
-    </tr>
-  </thead>
-  <tbody>
+  <tr>
+    <th>RRN</th>
+    <th>Тип операции</th>
+    <th>Магазин</th>
+    <th>Дата</th>
+    <th>Сумма</th>
+  </tr>
   {% for operation in all_operations %}
     <tr>
-      <td>{{ operation.shop.name }}</td>
-      <td>{{ operation.shop.category.name }}</td>
-      <td>{{ operation.operation_type.name }}</td>
+      <td>{{ operation.rrn }}</td>
+      <td>{{ operation.operation_type_name }}</td>
+      <td>{{ operation.shop_name }}</td>
       <td>{{ operation.date }}</td>
       <td>{{ operation.amt }}</td>
     </tr>
   {% empty %}
     <tr>
-      <td colspan="5">Нет операций</td>
+      <td colspan="6">No operations found.</td>
     </tr>
   {% endfor %}
-  </tbody>
 </table>
 {% endblock %}

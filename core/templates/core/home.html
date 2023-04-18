@@ -1,32 +1,30 @@
 {% extends "core/base.html" %}
 
 {% block title %} Главная страница {% endblock title %}
-{% block content %}
-  <h1>Последние операции</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Магазин</th>
-        <th>Категория</th>
-        <th>Тип операции</th>
-        <th>Дата</th>
-        <th>Сумма</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for operation in latest_operations %}
-        <tr>
-          <td>{{ operation.shop.name }}</td>
-          <td>{{ operation.shop.category.name }}</td>
-          <td>{{ operation.operation_type.name }}</td>
-          <td>{{ operation.date }}</td>
-          <td>{{ operation.amt }}</td>
-        </tr>
-      {% empty %}
-        <tr>
-          <td colspan="5">Нет операций</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-{% endblock %}
+{% block content %} 
+
+<h1>Последние операции</h1>
+
+<table class="{{ view.get_table_class }}">
+  <tr>
+    <th>RRN</th>
+    <th>Тип операции</th>
+    <th>Магазин</th>
+    <th>Дата </th>
+    <th>Сумма</th>
+  </tr>
+  {% for operation in latest_operations %}
+    <tr>
+      <td>{{ operation.rrn }}</td>
+      <td>{{ operation.operation_type_name }}</td>
+      <td>{{ operation.shop_name }}</td>
+      <td>{{ operation.date }}</td>
+      <td>{{ operation.amt }}</td>
+    </tr>
+  {% empty %}
+    <tr>
+      <td colspan="6">Операции отсутствуют</td>
+    </tr>
+  {% endfor %}
+
+{% endblock %}  
