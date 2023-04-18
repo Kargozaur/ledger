@@ -75,7 +75,7 @@ class ledger_fiscal_operations(models.Model):
     def clean(self):
         if self.rrn and len(str(self.rrn)) != 12:
             raise ValidationError("RRN должен состоять из 12 символов")
-        
+
     @transaction.atomic()
     def save_with_transaction(self, *args, **kwargs):
         self.save(*args, **kwargs)
@@ -91,7 +91,7 @@ class ShopAlias(ledger_shop):
         verbose_name_plural = "Shops Alias"
 
 
-#class FiscalOperationsAlias(ledger_fiscal_operations):
+# class FiscalOperationsAlias(ledger_fiscal_operations):
 #    class Meta:
 #        proxy = True
 #        verbose_name = "Операция"

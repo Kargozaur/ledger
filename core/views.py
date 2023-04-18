@@ -17,8 +17,12 @@ class HomePageView(ListView):
         # Получение связанных объектов из других таблиц
         queryset = super().get_queryset()
         for operation in queryset:
-            operation_type_name = operation.operation_type_id.name # Получение названия из связанной модели
-            shop_name = operation.shop_id.name # Получение названия из связанной модели
+            operation_type_name = (
+                operation.operation_type_id.name
+            )  # Получение названия из связанной модели
+            shop_name = (
+                operation.shop_id.name
+            )  # Получение названия из связанной модели
             operation.operation_type_name = operation_type_name
             operation.shop_name = shop_name
         return queryset
@@ -26,8 +30,10 @@ class HomePageView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Добавление дополнительных данных в контекст
-        context['operation_type_name'] = self.object_list[0].operation_type_name
-        context['shop_name'] = self.object_list[0].shop_name
+        context["operation_type_name"] = self.object_list[
+            0
+        ].operation_type_name
+        context["shop_name"] = self.object_list[0].shop_name
         return context
 
 
@@ -41,8 +47,12 @@ class HistoryView(ListView):
         # Получение связанных объектов из других таблиц
         queryset = super().get_queryset()
         for operation in queryset:
-            operation_type_name = operation.operation_type_id.name # Получение названия из связанной модели
-            shop_name = operation.shop_id.name # Получение названия из связанной модели
+            operation_type_name = (
+                operation.operation_type_id.name
+            )  # Получение названия из связанной модели
+            shop_name = (
+                operation.shop_id.name
+            )  # Получение названия из связанной модели
             operation.operation_type_name = operation_type_name
             operation.shop_name = shop_name
         return queryset
@@ -50,12 +60,14 @@ class HistoryView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Добавление дополнительных данных в контекст
-        context['operation_type_name'] = self.object_list[0].operation_type_name
-        context['shop_name'] = self.object_list[0].shop_name
+        context["operation_type_name"] = self.object_list[
+            0
+        ].operation_type_name
+        context["shop_name"] = self.object_list[0].shop_name
         return context
-    
+
     def get_table_class(self):
-        return 'my-table' 
+        return "my-table"
 
 
 class CreateFiscalOperation(CreateView):
@@ -97,4 +109,3 @@ class CreateFiscalOperation(CreateView):
 
     def get_success_url(self):
         return self.request.path
-        
