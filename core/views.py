@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 from .forms import RecordForm
 from .models import ledger_fiscal_operations
+from django.db import transaction
+from django.http import HttpResponse
 
 
 class HomePageView(ListView):
@@ -14,7 +16,6 @@ class HomePageView(ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        # Получение связанных объектов из других таблиц
         queryset = super().get_queryset()
         for operation in queryset:
             operation_type_name = (
@@ -29,13 +30,14 @@ class HomePageView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Добавление дополнительных данных в контекст
-        context["operation_type_name"] = self.object_list[
-            0
-        ].operation_type_name
-        context["shop_name"] = self.object_list[0].shop_name
+        if self.object_list.exists():
+            latest_operation = self.object_list[0]
+            context["operation_type_name"] = latest_operation.operation_type_id.name
+            context["shop_name"] = latest_operation.shop_id.name
+        else:
+            context["operation_type_name"] = None
+            context["shop_name"] = None
         return context
-
 
 class HistoryView(ListView):
     model = ledger_fiscal_operations
@@ -44,7 +46,6 @@ class HistoryView(ListView):
     ordering = ["-created_at"]
 
     def get_queryset(self):
-        # Получение связанных объектов из других таблиц
         queryset = super().get_queryset()
         for operation in queryset:
             operation_type_name = (
@@ -59,15 +60,13 @@ class HistoryView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Добавление дополнительных данных в контекст
-        context["operation_type_name"] = self.object_list[
-            0
-        ].operation_type_name
-        context["shop_name"] = self.object_list[0].shop_name
+        if self.object_list.exists():
+            context["operation_type_name"] = self.object_list[0].operation_type_id.name
+            context["shop_name"] = self.object_list[0].shop_id.name
+        else:
+            context["operation_type_name"] = None
+            context["shop_name"] = None
         return context
-
-    def get_table_class(self):
-        return "my-table"
 
 
 class CreateFiscalOperation(CreateView):
@@ -79,23 +78,15 @@ class CreateFiscalOperation(CreateView):
     def form_valid(self, form):
         try:
             # Получаем данные из формы
-            rrn = form.cleaned_data.get("rrn")
-            operation_type_id = form.cleaned_data.get("operation_type_id")
-            shop_id = form.cleaned_data.get("shop_id")
-            date = form.cleaned_data.get("date")
-            amt = form.cleaned_data.get("amt")
-            created_at = form.cleaned_data.get("created_at")
-
-            # Создаем объект модели
-            obj = ledger_fiscal_operations(
-                rrn=rrn,
-                operation_type_id=operation_type_id,
-                shop_id=shop_id,
-                date=date,
-                amt=amt,
-                created_at=created_at,
-            )
-            obj.save()  # Сохраняем объект модели в БД
+            form.instance.rrn = form.cleaned_data.get("rrn")
+            form.instance.operation_type_id = form.cleaned_data.get("operation_type_id")
+            form.instance.shop_id = form.cleaned_data.get("shop_id")
+            form.instance.date = form.cleaned_data.get("date")
+            form.instance.amt = form.cleaned_data.get("amt")
+            form.instance.created_at = form.cleaned_data.get("created_at")
+            if not form.instance.rrn:
+                form.instance.rrn = form.instance.id  # Присваиваем значение id полю rrn
+            form.save()  # Сохраняем объект модели в БД
 
             # Выводим сообщение об успешном создании объекта
             messages.success(self.request, "Операция создана успешно")

@@ -48,10 +48,10 @@ class RecordForm(forms.ModelForm):
     # проверка rrn
     def clean_rrn(self):
         rrn = self.cleaned_data.get("rrn")
-        if rrn and len(str(rrn)) != 12:
-            raise forms.ValidationError("RRN должен состоять из 12 символов")
-        else:
+        if rrn is None or rrn == "":
             rrn = self.instance.id if rrn is None or rrn == "" else rrn
+        elif rrn and len(str(rrn)) != 12:
+            raise forms.ValidationError("RRN должен состоять из 12 символов")
         return rrn
 
     # доп настройки -> rrn не обязательное поле
@@ -61,3 +61,11 @@ class RecordForm(forms.ModelForm):
         self.fields[
             "operation_type_id"
         ].queryset = ledger_operation_type.objects.all()
+
+    def save(self, commit=True):
+        instance = super(RecordForm, self).save(commit=False)
+        if not instance.rrn:
+            instance.rrn = instance.id
+        if commit:
+            instance.save()
+        return instance

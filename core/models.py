@@ -1,5 +1,7 @@
 from django.db import models, transaction
 from django.core.exceptions import ValidationError
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
 
 
 # Models
@@ -24,7 +26,7 @@ class ledger_category(models.Model):
         db_table = "ledger_category"
 
     def __str__(self):
-        return str(self.id)
+        return self.name    
 
 
 class ledger_shop(models.Model):
@@ -47,7 +49,7 @@ class ledger_shop(models.Model):
 
 class ledger_fiscal_operations(models.Model):
     id = models.AutoField(primary_key=True, db_column="id")
-    rrn = models.BigIntegerField(unique=True, db_column="rrn")
+    rrn = models.BigIntegerField(unique=True, db_column="rrn", null=True, blank=True)
     operation_type_id = models.ForeignKey(
         ledger_operation_type,
         to_field="id",
@@ -67,28 +69,37 @@ class ledger_fiscal_operations(models.Model):
     class Meta:
         db_table = "ledger_fiscal_operations"
 
-    def save(self, *args, **kwargs):
-        if not self.rrn:
-            self.rrn = self.id
-        super(ledger_fiscal_operations, self).save(*args, **kwargs)
-
     def clean(self):
         if self.rrn and len(str(self.rrn)) != 12:
             raise ValidationError("RRN должен состоять из 12 символов")
 
     @transaction.atomic()
     def save_with_transaction(self, *args, **kwargs):
-        self.save(*args, **kwargs)
+        if not self.rrn:
+            self.save() # сохраняем объект, чтобы получить автоматически присвоенное значение id
+            self.rrn = self.id
+            super(ledger_fiscal_operations, self).save(*args, **kwargs)
+        else:
+            super(ledger_fiscal_operations, self).save(*args, **kwargs)
+        
+    
+    #def clean(self):
+    #    if self.rrn and len(str(self.rrn)) != 12:
+    #        raise ValidationError("RRN должен состоять из 12 символов")
+
+    #@transaction.atomic()
+    #def save_with_transaction(self, *args, **kwargs):
+    #    self.save(*args, **kwargs)
 
 
 # Alias
 
 
-class ShopAlias(ledger_shop):
-    class Meta:
-        proxy = True
-        verbose_name = "Shop Alias"
-        verbose_name_plural = "Shops Alias"
+#class ShopAlias(ledger_shop):
+#    class Meta:
+#        proxy = True
+#        verbose_name = "Shop Alias"
+#        verbose_name_plural = "Shops Alias"
 
 
 # class FiscalOperationsAlias(ledger_fiscal_operations):
