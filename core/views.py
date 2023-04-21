@@ -12,7 +12,7 @@ class HomePageView(ListView):
     model = ledger_fiscal_operations
     template_name = "home.html"
     context_object_name = "latest_operations"
-    ordering = ["-created_at"]
+    ordering = ["-date"]
     paginate_by = 5
 
     def get_queryset(self):
@@ -43,7 +43,7 @@ class HistoryView(ListView):
     model = ledger_fiscal_operations
     template_name = "history.html"
     context_object_name = "all_operations"
-    ordering = ["-created_at"]
+    ordering = ["date"]
 
     def get_queryset(self):
         queryset = super().get_queryset()
