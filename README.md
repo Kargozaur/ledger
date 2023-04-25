@@ -27,8 +27,8 @@ To fill table ledger_fiscal_operations use /create_fiscal_operations or **Соз
 ### Output
 Example output of [database](ledger_fiscal_operations_202304212006.csv)
 
-### Example outputs of working with dataset using [notebook](ds.ipynb)
-1.   All [spending](fiscal_operations.csv) and image ![image](output_total.png)
-2.   Spending by day and image ![image](output_by_day.png)
-2.   Spending on [food](product.csv) and image ![image](output_product_total.png)
-3.   Spending by [category](category.csv) and image ![image](output_category_total.png)
+### Example outputs of working with dataset using [notebook](/DA/ds.ipynb)
+1.   All [spending](fiscal_operations.csv) and image ![image](/DA/output_total.png)
+2.   Spending by day and image ![image](/DA/output_by_day.png)
+2.   Spending on [food](/DA/product.csv) and image ![image](/DA/output_product_total.png)
+3.   Spending by [category](/DA/category.csv) and image ![image](/DA/output_category_total.png)
